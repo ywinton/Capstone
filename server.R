@@ -1,14 +1,20 @@
 # server.R ####
-# Coursera Data Science Capstone Project (https://www.coursera.org/course/dsscapstone)
-# Shiny server script
-# 2016-01-23
- 
-# Libraries and options ####
-#source('prediction.R')
+# Coursera Data Science Capstone Project 
+# 2017-2-26
 
+
+# Libraries ####
+
+source('prediction.R')
+library(dplyr)
+library(wordcloud)
+library(RColorBrewer)
+library(tm)
+library(RWeka)
+library(quanteda)
 library(shiny)
 
-# Define application ####
+# Shiny App ####
 
 shinyServer(function(input, output) {
   
@@ -19,6 +25,8 @@ shinyServer(function(input, output) {
     Text <- input$text
     input1 <-  textsplit(Text)[1, ]
     input2 <-  textsplit(Text)[2, ]
+   #input3 <-  textsplit2(Text)[3, ]
+
     nSuggestion <- input$slider
     
     # Predict
@@ -27,15 +35,18 @@ shinyServer(function(input, output) {
   
   # Output data table ####
   output$table <- renderDataTable(predict(),
-                                 option = list(pageLength = 5,
-                                             # lengthMenu = list(c(5, 10, 100), c('5', '10', '100')),
-                                               columnDefs = list(list(visible = F, targets = 1)),
-                                               searching = F
-                                 )
+                                  option = list(pageLength = 10,
+                                                # lengthMenu = list(c(5, 10, 100), c('5', '10', '100')),
+                                                columnDefs = list(list(visible = F, targets = 1)),
+                                                searching = F
+                                  )
   )
+  
+  
   
   # Output word cloud ####
   wordcloud_rep = repeatable(wordcloud)
+  # is.na(predict()$Next) <- 0
   output$wordcloud <- renderPlot(
     wordcloud_rep(
       predict()$Next,

@@ -1,61 +1,57 @@
 # ui.R ####
-# Coursera Data Science Capstone Project (https://www.coursera.org/course/dsscapstone)
 # Shiny UI script
-# 2016-01-23
+# 2017-2-26
 
-# Libraries and options ####
 library(shiny)
-#library(shinythemes)
 
-# Define the app ####
 
-shinyUI(fluidPage(
-  
-  # Theme
-  #theme = shinytheme("flatly"),
-  
-  # Application title
-  titlePanel("Word Predictor"),
-  
-  # Sidebar ####    
-  sidebarLayout(
+shinyUI
+(
+  fluidPage
+  (theme =  "united.css",
     
-    sidebarPanel(
-      
-      # Text input
-      textInput("text", label = ('Your Input Text'), value = ''),
-      
-      # Number of words slider input
-      sliderInput('slider',
-                  'Number of suggested words',
-                  min = 0,  max = 10,  value = 5
-      ),
-      
-      # Table output
-      dataTableOutput('table')),
+    # Application title
+    titlePanel("Word Predictor"),
     
-    # Mainpanel ####
-    
-    mainPanel(
+    # Sidebar ####    
+    sidebarLayout(
       
-      wellPanel(
+      sidebarPanel(
         
-        # Link to report
-        helpText(a('More information on the app',
-                   href='what', 
-                   target = '_blank')
+        # Text input
+        textInput("text", label = ('Your Input Text'), value = ''),
+        
+        # Number of words slider input
+        sliderInput('slider',
+                    'Number of suggested words',
+                    min = 0,  max = 20,  value = 8
         ),
         
-        # Link to repo
-        helpText(a('Code repository',
-                   href='what',
-                   target = '_blank')
-        ),
+        # Table output
+        dataTableOutput('table')),
+      
+      # Mainpanel ####
+      
+      mainPanel(
         
-        # Wordcloud output
-        plotOutput('wordcloud')
-      )
-    ) 
+        wellPanel(
+          
+          # Details on app
+          helpText(a('Information on the app',
+                     href='http://rpubs.com/ywinton/255957', 
+                     target = '_blank')
+          ),
+          
+          # Link to repo
+          helpText(a('Code repository',
+                     href='https://github.com/ywinton/Capstone',
+                     target = '_blank')
+          ),
+          
+          # Wordcloud output
+          plotOutput('wordcloud')
+        )
+      ) 
+    )
   )
-)
 )
