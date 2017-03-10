@@ -11,8 +11,8 @@ output: ioslides_presentation
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
-
-## How to Use 
+##
+###How to Use 
 
 - Please open app and wait up to 30 seconds.
 - When slider for number of words appears, app is ready.
@@ -26,8 +26,8 @@ https://ywpublic.shinyapps.io/PredictWord/
 Code repository:  
 https://github.com/ywinton/Capstone
 
-
-## Data Source
+##
+###Data Source
 
 The data sources are text files gathered from Twitter, blogs and news sources, collected by a web crawler.  Due to the enormous size of dataset, 10% of the raw data was finally used to build a prediction model. Unigram, bigram, trigram and quadgram libraries were built.  Training and prediction sets were split 80-20. The last 2 or 3 words of the input phrase were extracted for prediction. 2 different prediction models were considered:
 
@@ -35,8 +35,8 @@ The data sources are text files gathered from Twitter, blogs and news sources, c
 - Model 2: Predict from trigram, if not found, then bigram then unigram libraries
 
 
-
-##Prediction Models
+##
+###Prediction Models
 Validation turned out to be very tricky with such a large amount of data. Model 2 was considered due to difficulty in validation with Model 1. Prediction models were validated with 0.1%, 0.3%, 1% of the raw data but validation failed due to memory leak when attempted with 10% of raw data.
 ```{r, include=FALSE}
 data.frame(Accuracy=c("Bigram","Trigram","Quadgram"),RawData_0.1pct=c("0.38","0.38","0.38"), RawData_0.3pct=c("0.39","0.42","0.41"))
@@ -45,8 +45,8 @@ Model 2 has better prediction accuracy than Model 1 when validated with 0.3% of 
 ```{r, echo = FALSE}
 data.frame(Accuracy=c("Bigram","Trigram","Quadgram"),Model1=c("0.39","0.42","0.41"), Model2=c("0.41","0.42","0.41"))
 ```
-
-## Final Prediction Model
+##
+###Final Prediction Model
 Model 2 was picked and was validated with up to 1% of raw data.
 As the amount of data increased for training, prediction accurary improved:
 ```{r, echo=FALSE}
