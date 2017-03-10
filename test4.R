@@ -85,42 +85,39 @@ valid4 = data_frame(Next = valid4) %>%
 
 # Results ####
 
-# Rounding precision
-accuRound = 2
-
 # Accuracy using 1 previous word and 5 suggestions
 nSuggestions = 5
-accuOneFive = round(accu(valid2), accuRound)
+oneaccu5 = round(accu(valid2), 2)
 
 # Accuracy using 1 previous word and 3 suggestions
 #nSuggestions = 3
-#accuOneThree = round(accu(valid2), accuRound)
+#oneaccu3 = round(accu(valid2), 2)
 
 # Accuracy using 1 previous word and 1 suggestion
 #nSuggestions = 1
-#accuOneOne = round(accu(valid2), accuRound)
+#oneaccu1 = round(accu(valid2), 2)
 
 # Accuracy using 2 previous words and 5 suggestions
 nSuggestions = 5
-accuTwoFive = round(accu(valid3), accuRound)
+twoaccu5 = round(accu(valid3), 2)
 
 # Accuracy using 2 previous words and 3 suggestions
 #nSuggestions = 3
-#accuTwoThree = round(accu(valid3), accuRound)
+#twoaccu3 = round(accu(valid3), 2)
 
 nSuggestions = 5
-accuThreeFive = round(accu(valid4), accuRound)
+threeaccu5 = round(accu(valid4), 2)
 
 # Accuracy using 2 previous words and 1 suggestion
 #nSuggestions = 1
-#accuTwoOne = round(accu(valid3), accuRound)
+#twoaccu1 = = round(accu(valid3), 2)
 
 # Summary table
-accuSummary = data.frame(Suggest5 = c(accuThreeFive,accuTwoFive, accuOneFive),
- # Suggest3 = c(accuThreeThree, accuTwoThree, accuOneThree),
-  #Suggest1 = c(accuTwoOne, accuOneOne),
+accuracy_sum = data.frame(Suggest5 = c(threeaccu5,twoaccu5 , oneaccu5),
+ # Suggest3 = c(threeaccu3,twoaccu3, oneaccu3),
+  #Suggest1 = c(threeaccu1,twoaccu1 , oneaccu1),
   row.names = c('Previous3','Previous2', 'Previous1')
 )
-print(accuSummary)
+print(accuracy_sum)
 
 
