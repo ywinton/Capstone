@@ -1,0 +1,114 @@
+---
+title: "Data Science Capstone Milestone Report"
+author: "Yvette Winton"
+date: "February 11, 2017"
+output: html_document
+---
+
+###Objective
+The end goal of the course is to build a Shiny application which will predict the next word when an user inputs some text.  The goal of this milestone report is to get feedback on a plan for creating a prediction algorithm and Shiny app. This report analyzes a large corpus of text documents.  Cleaning and exploratory analysis of the given data is performed. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=FALSE, comment=FALSE}
+setwd("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US")
+library(stringi)
+library(tm)
+library(RWeka)
+```
+
+###Data
+We will focus only in 3 text files from blogs, news sites and twitter that are in English.  All other languages will not be included in this data exploration.
+
+```{r, include=TRUE, warning=FALSE, comment=FALSE}
+twitter <- readLines("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.twitter.txt")
+blogs <- readLines("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.blogs.txt")
+news <-readLines("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.news.txt")
+
+twitter_size <- file.info("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.twitter.txt")$size / 1024^2
+blogs_size <- file.info("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.blogs.txt")$size / 1024^2
+news_size <- file.info("/Users/yvette/Class/DataScience/10-Capstone/Week1/final/en_US/en_US.news.txt")$size / 1024^2
+
+data.frame(Name = c ("en_US.twitter", "en_US.blogs", "en_US.news"),
+                         FileSize=round( c (twitter_size,blogs_size,news_size ), digits=0),
+                         Lines = c (length(twitter), length(blogs), length(news)),
+                         Words = c (sum(sapply(strsplit(twitter," "), length)), sum(sapply(strsplit(blogs," "), length)), sum(sapply(strsplit(news," "), length)) ))
+
+```
+
+### Findings
+- The files are very big.  
+- Although all 3 files have roughly the same number of magnitude of words, twitter has the most lines as expected.  
+- Blogs have the least lines but biggest in file size.
+- Twitter sentences are the most concise judging from words per line.  
+
+### Sample and build corpus
+I will sample the 3 text files roughly proportional to the number of lines in the files.
+
+
+```{r, include=TRUE, warning=FALSE, comment=FALSE}
+
+blogs_sample <- sample(blogs, size =1000,
+                      replace = FALSE)
+news_sample <- sample(news, size = 1200,
+                      replace = FALSE)
+twitter_sample <- sample(twitter, size = 3000,
+                      replace = FALSE)
+
+corpus <- VCorpus(VectorSource(paste(blogs_sample,news_sample,twitter_sample)), readerControl = list(language = "English"))
+```
+
+###Data Cleanup
+Numbers, punctuation, whitespace, numbers, bad words will be removed.  Upper case will be transformed into lower case.
+```{r, include=TRUE, warning=FALSE, comment=FALSE}
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, content_transformer(tolower))
+profanity <- read.csv("/Users/yvette/Class/DataScience/10-Capstone/Week2/BadWords.csv", header=FALSE)
+iswear <- as.character(profanity[[1]])
+corpus <- tm_map(corpus, removeWords, iswear)                
+fdt<-data.frame(text=unlist(sapply(corpus, `[`, "content")),stringsAsFactors=F)
+
+```
+
+###Find Frequency of Words by Tokenizing Samples
+Unigram, bigrams and trigrams will be built from samples.  Top 20 highest frequecy of each category will be showned.
+```{r, include=TRUE, warning=FALSE, comment=FALSE}
+ngrams <- function(x ,gram) {
+    tokenizer <-NGramTokenizer(x , Weka_control(min = gram, max = gram))
+    gramdf <- data.frame(table(tokenizer))
+    ordergram <- gramdf[order(gramdf$Freq, decreasing = TRUE), ]
+    topgram <- ordergram[1:20,]
+    topgram
+}
+
+Unigram <- ngrams(fdt , 1 )
+Bigram <- ngrams(fdt , 2 )
+Trigram <- ngrams(fdt , 3 )
+```
+
+### Plot Top 20 Highest Frequecy of Unigram
+
+```{r, include=TRUE}
+barplot(height=Unigram$Freq, cex.names=0.5,names.arg=Unigram$tokenizer, col="blue", main="Unigram Frequency", las=2)
+```
+
+### Plot Top 20 Highest Frequecy of Bigram
+```{r, include=TRUE}
+barplot(height=Bigram$Freq, cex.names=0.5,names.arg=Bigram$tokenizer, col="red", main="Bigram Frequency", las=2)
+```
+
+### Plot Top 20 Highest Frequecy of Trigram
+```{r, include=TRUE}
+barplot(height=Trigram$Freq, cex.names=0.5,names.arg=Trigram$tokenizer, col="green", main="Trigram Frequency",las=2)
+```
+
+### Next Step for Prediction Algorithm
+- Play around with different sampling proportion of the 3 files to build up more meaningful words/ phrases.
+- Using the same process to build 1-, 2-, 3-, 4- grams model
+- When a user starts typing, 4-gram prediction will come up, if no match, then 3-gram and so on.
+- Create a shiny application based on the prediction model.
+- It is dissapointing to see the highest frequency phrases are not of much value from this report, you input is much appreciated.
