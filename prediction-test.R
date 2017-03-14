@@ -140,7 +140,7 @@ textsplit2 <- function(x) {
     # For non-single word entry, return last 3 works    
   }   else if (nrow(tx) > 2) {
     input1 <- tail(tx, 3)[1, ]
-    input2 <- tail(tx, 2)
+    input2 <- tail(tx, 2)[1, ]
     input3 <- tail(tx, 1)
   }
   
